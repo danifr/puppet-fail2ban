@@ -183,6 +183,29 @@ describe 'fail2ban' do
       end
     end
 
+    context 'when defining custom jails' do
+      it 'is_expected.to be added with no errors' do
+        pp = <<-EOS
+          class { 'fail2ban':
+            config_file_template => "fail2ban/#{fact('lsbdistcodename')}/#{config_file_path}.erb",
+            custom_jails         => {
+              'mycumstom_jail'     => {
+                  'filter_failregex' => '^mycustomjail_failregex$',
+                  'action'           => 'iptables',
+               }
+            }
+          }
+        EOS
+
+        apply_manifest(pp, catch_failures: true)
+      end
+
+      describe file(config_file_path) do
+        it { is_expected.to be_file }
+        it { is_expected.to contain %r{^\[mycumstom_jail\]$} }
+      end
+    end
+
     context 'when content template and custom sender' do
       it 'is_expected.to work with no errors' do
         pp = <<-EOS
