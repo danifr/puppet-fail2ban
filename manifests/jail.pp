@@ -29,11 +29,10 @@ define fail2ban::jail (
 ) {
 
   # Jail filter creation
-  file { "$config_dir_filter_path":
+  file { $config_dir_filter_path:
     ensure => directory,
     owner  => $config_file_owner,
     group  => $config_file_group,
-    before => File["custom_filter_${name}"]
   }
 
   file { "custom_filter_${name}":
@@ -63,7 +62,6 @@ define fail2ban::jail (
     ensure => directory,
     owner  => $config_file_owner,
     group  => $config_file_group,
-    before => File["custom_jail_${name}"]
   }
 
   file { "custom_jail_${name}":
